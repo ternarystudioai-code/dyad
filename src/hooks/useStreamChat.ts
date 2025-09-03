@@ -23,7 +23,6 @@ import { useProposal } from "./useProposal";
 import { useSearch } from "@tanstack/react-router";
 import { useRunApp } from "./useRunApp";
 import { useCountTokens } from "./useCountTokens";
-import { useUserBudgetInfo } from "./useUserBudgetInfo";
 import { usePostHog } from "posthog-js/react";
 import { useCheckProblems } from "./useCheckProblems";
 import { useSettings } from "./useSettings";
@@ -46,7 +45,6 @@ export function useStreamChat({
   const { refreshVersions } = useVersions(selectedAppId);
   const { refreshAppIframe } = useRunApp();
   const { countTokens } = useCountTokens();
-  const { refetchUserBudget } = useUserBudgetInfo();
   const { checkProblems } = useCheckProblems(selectedAppId);
   const { settings } = useSettings();
   const posthog = usePostHog();
@@ -114,8 +112,6 @@ export function useStreamChat({
             }
             refreshProposal(chatId);
 
-            refetchUserBudget();
-
             // Keep the same as below
             setIsStreaming(false);
             refreshChats();
@@ -147,7 +143,6 @@ export function useStreamChat({
       setIsPreviewOpen,
       checkProblems,
       selectedAppId,
-      refetchUserBudget,
       settings,
     ],
   );

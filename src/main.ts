@@ -12,7 +12,6 @@ import {
   writeSettings,
 } from "./main/settings";
 import { handleSupabaseOAuthReturn } from "./supabase_admin/supabase_return_handler";
-import { handleDyadProReturn } from "./main/pro";
 import { IS_TEST_BUILD } from "./ipc/utils/test_utils";
 import { BackupManager } from "./backup_manager";
 import { getDatabasePath, initializeDatabase } from "./db";
@@ -245,22 +244,7 @@ function handleDeepLinkReturn(url: string) {
     });
     return;
   }
-  // dyad://dyad-pro-return?key=123&budget_reset_at=2025-05-26T16:31:13.492000Z&max_budget=100
-  if (parsed.hostname === "dyad-pro-return") {
-    const apiKey = parsed.searchParams.get("key");
-    if (!apiKey) {
-      dialog.showErrorBox("Invalid URL", "Expected key");
-      return;
-    }
-    handleDyadProReturn({
-      apiKey,
-    });
-    // Send message to renderer to trigger re-render
-    mainWindow?.webContents.send("deep-link-received", {
-      type: parsed.hostname,
-    });
-    return;
-  }
+  // Dyad Pro deep link removed
   dialog.showErrorBox("Invalid deep link URL", url);
 }
 

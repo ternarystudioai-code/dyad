@@ -86,23 +86,12 @@ export function registerTokenCountHandlers() {
 
       if (chat.app) {
         const appPath = getDyadAppPath(chat.app.path);
-        const { formattedOutput, files } = await extractCodebase({
+        const { formattedOutput } = await extractCodebase({
           appPath,
           chatContext: validateChatContext(chat.app.chatContext),
         });
         codebaseInfo = formattedOutput;
-        if (settings.enableDyadPro && settings.enableProSmartFilesContextMode) {
-          codebaseTokens = estimateTokens(
-            files
-              // It doesn't need to be the exact format but it's just to get a token estimate
-              .map(
-                (file) => `<dyad-file=${file.path}>${file.content}</dyad-file>`,
-              )
-              .join("\n\n"),
-          );
-        } else {
-          codebaseTokens = estimateTokens(codebaseInfo);
-        }
+        codebaseTokens = estimateTokens(codebaseInfo);
         logger.log(
           `Extracted codebase information from ${appPath}, tokens: ${codebaseTokens}`,
         );

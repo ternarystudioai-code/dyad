@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import { ipcMain } from "electron";
 import {
   ModelMessage,
@@ -42,8 +41,6 @@ import { getMaxTokens, getTemperature } from "../utils/token_utils";
 import { MAX_CHAT_TURNS_IN_CONTEXT } from "@/constants/settings_constants";
 import { validateChatContext } from "../utils/context_paths_utils";
 import { GoogleGenerativeAIProviderOptions } from "@ai-sdk/google";
-
-import { getExtraProviderOptions } from "../utils/thinking_utils";
 
 import { safeSend } from "../utils/safe_sender";
 import { cleanFullResponse } from "../utils/cleanFullResponse";
@@ -377,6 +374,9 @@ ${componentSnippet}
 
       let fullResponse = "";
 
+      // Read latest settings once for this request
+      const settings = readSettings();
+
       // Check if this is a test prompt
       const testResponse = getTestResponse(req.prompt);
 
@@ -390,9 +390,6 @@ ${componentSnippet}
           updatedChat,
         );
       } else {
-        // Normal AI processing for non-test prompts
-        const settings = readSettings();
-
         const appPath = getDyadAppPath(updatedChat.app.path);
         const chatContext = req.selectedComponent
           ? {
@@ -401,7 +398,6 @@ ${componentSnippet}
                   globPath: req.selectedComponent.relativePath,
                 },
               ],
-              smartContextAutoIncludes: [],
             }
           : validateChatContext(updatedChat.app.chatContext);
 
@@ -444,7 +440,7 @@ ${componentSnippet}
           "estimated tokens",
           codebaseInfo.length / 4,
         );
-        const { modelClient, isEngineEnabled } = await getModelClient(
+        const { modelClient } = await getModelClient(
           settings.selectedModel,
           settings,
           files,
@@ -576,19 +572,16 @@ This conversation includes one or more image attachments. When the user uploads 
 `;
         }
 
-        const codebasePrefix = isEngineEnabled
-          ? // No codebase prefix if engine is set, we will take of it there.
-            []
-          : ([
-              {
-                role: "user",
-                content: createCodebasePrompt(codebaseInfo),
-              },
-              {
-                role: "assistant",
-                content: "OK, got it. I'm ready to help",
-              },
-            ] as const);
+        const codebasePrefix = [
+          {
+            role: "user",
+            content: createCodebasePrompt(codebaseInfo),
+          },
+          {
+            role: "assistant",
+            content: "OK, got it. I'm ready to help",
+          },
+        ] as const;
 
         const otherCodebasePrefix = otherAppsCodebaseInfo
           ? ([
@@ -658,28 +651,13 @@ This conversation includes one or more image attachments. When the user uploads 
           chatMessages: ModelMessage[];
           modelClient: ModelClient;
         }) => {
-          const dyadRequestId = uuidv4();
-          if (isEngineEnabled) {
-            logger.log(
-              "sending AI request to engine with request id:",
-              dyadRequestId,
-            );
-          } else {
-            logger.log("sending AI request");
-          }
+          logger.log("sending AI request");
           return streamText({
             maxOutputTokens: await getMaxTokens(settings.selectedModel),
             temperature: await getTemperature(settings.selectedModel),
             maxRetries: 2,
             model: modelClient.model,
             providerOptions: {
-              "dyad-engine": {
-                dyadRequestId,
-              },
-              "dyad-gateway": getExtraProviderOptions(
-                modelClient.builtinProviderId,
-                settings,
-              ),
               google: {
                 thinkingConfig: {
                   includeThoughts: true,
@@ -699,12 +677,9 @@ This conversation includes one or more image attachments. When the user uploads 
                 errorMessage += "\n\nDetails: " + responseBody;
               }
               const message = errorMessage || JSON.stringify(error);
-              const requestIdPrefix = isEngineEnabled
-                ? `[Request ID: ${dyadRequestId}] `
-                : "";
               event.sender.send(
                 "chat:response:error",
-                `Sorry, there was an error from the AI: ${requestIdPrefix}${message}`,
+                `Sorry, there was an error from the AI: ${message}`,
               );
               // Clean up the abort controller
               activeStreams.delete(req.chatId);

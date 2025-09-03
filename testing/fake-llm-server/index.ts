@@ -137,7 +137,7 @@ app.get("/lmstudio/api/v0/models", (req, res) => {
   res.json(lmStudioModels);
 });
 
-["lmstudio", "gateway", "engine", "ollama", "azure"].forEach((provider) => {
+["lmstudio", "ollama", "azure"].forEach((provider) => {
   app.post(
     `/${provider}/v1/chat/completions`,
     createChatCompletionHandler(provider),

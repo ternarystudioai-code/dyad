@@ -65,25 +65,6 @@ export class ContextFilesPickerDialog {
   }
 }
 
-class ProModesDialog {
-  constructor(
-    public page: Page,
-    public close: () => Promise<void>,
-  ) {}
-
-  async setSmartContextMode(mode: "balanced" | "off" | "conservative") {
-    await this.page
-      .getByRole("button", {
-        name: mode.charAt(0).toUpperCase() + mode.slice(1),
-      })
-      .click();
-  }
-
-  async toggleTurboEdits() {
-    await this.page.getByRole("switch", { name: "Turbo Edits" }).click();
-  }
-}
-
 class GitHubConnector {
   constructor(public page: Page) {}
 
@@ -249,16 +230,6 @@ export class PageObject {
     await this.selectTestModel();
   }
 
-  async setUpDyadPro({ autoApprove = false }: { autoApprove?: boolean } = {}) {
-    await this.baseSetup();
-    await this.goToSettingsTab();
-    if (autoApprove) {
-      await this.toggleAutoApprove();
-    }
-    await this.setUpDyadProvider();
-    await this.goToAppsTab();
-  }
-
   async ensurePnpmInstall() {
     const appPath = await this.getCurrentAppPath();
     if (!appPath) {
@@ -308,19 +279,6 @@ export class PageObject {
     );
   }
 
-  async setUpDyadProvider() {
-    await this.page
-      .locator("div")
-      .filter({ hasText: /^DyadNeeds Setup$/ })
-      .nth(1)
-      .click();
-    await this.page.getByRole("textbox", { name: "Set Dyad API Key" }).click();
-    await this.page
-      .getByRole("textbox", { name: "Set Dyad API Key" })
-      .fill("testdyadkey");
-    await this.page.getByRole("button", { name: "Save Key" }).click();
-  }
-
   async importApp(appDir: string) {
     await this.page.getByRole("button", { name: "Import App" }).click();
     await eph.stubDialog(this.electronApp, "showOpenDialog", {
@@ -340,21 +298,6 @@ export class PageObject {
     await contextButton.click();
     return new ContextFilesPickerDialog(this.page, async () => {
       await contextButton.click();
-    });
-  }
-
-  async openProModesDialog({
-    location = "chat-input-container",
-  }: {
-    location?: "chat-input-container" | "home-chat-input-container";
-  } = {}): Promise<ProModesDialog> {
-    const proButton = this.page
-      // Assumes you're on the chat page.
-      .getByTestId(location)
-      .getByRole("button", { name: "Pro", exact: true });
-    await proButton.click();
-    return new ProModesDialog(this.page, async () => {
-      await proButton.click();
     });
   }
 
@@ -713,8 +656,7 @@ export class PageObject {
     if (autoApprove) {
       await this.toggleAutoApprove();
     }
-    // Azure should already be configured via environment variables
-    // so we don't need additional setup steps like setUpDyadProvider
+
     await this.goToAppsTab();
   }
 
@@ -1060,8 +1002,6 @@ export const test = base.extend<{
       process.env.OLLAMA_HOST = "http://localhost:3500/ollama";
       process.env.LM_STUDIO_BASE_URL_FOR_TESTING =
         "http://localhost:3500/lmstudio";
-      process.env.DYAD_ENGINE_URL = "http://localhost:3500/engine/v1";
-      process.env.DYAD_GATEWAY_URL = "http://localhost:3500/gateway/v1";
       process.env.E2E_TEST_BUILD = "true";
       // This is just a hack to avoid the AI setup screen.
       process.env.OPENAI_API_KEY = "sk-test";

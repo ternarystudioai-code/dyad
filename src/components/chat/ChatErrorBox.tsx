@@ -6,21 +6,14 @@ import remarkGfm from "remark-gfm";
 export function ChatErrorBox({
   onDismiss,
   error,
-  isDyadProEnabled,
 }: {
   onDismiss: () => void;
   error: string;
-  isDyadProEnabled: boolean;
 }) {
   if (error.includes("doesn't have a free quota tier")) {
     return (
       <ChatErrorContainer onDismiss={onDismiss}>
         {error}
-        <span className="ml-1">
-          <ExternalLink href="https://dyad.sh/pro">
-            Access with Dyad Pro
-          </ExternalLink>
-        </span>{" "}
         or switch to another model.
       </ChatErrorContainer>
     );
@@ -35,11 +28,6 @@ export function ChatErrorBox({
     return (
       <ChatErrorContainer onDismiss={onDismiss}>
         {error}
-        <span className="ml-1">
-          <ExternalLink href="https://dyad.sh/pro">
-            Upgrade to Dyad Pro
-          </ExternalLink>
-        </span>{" "}
         or read the
         <span className="ml-1">
           <ExternalLink href="https://dyad.sh/docs/help/ai-rate-limit">
@@ -54,24 +42,8 @@ export function ChatErrorBox({
     return (
       <ChatInfoContainer onDismiss={onDismiss}>
         <span>
-          Looks like you don't have a valid Dyad Pro key.{" "}
-          <ExternalLink href="https://dyad.sh/pro">
-            Upgrade to Dyad Pro
-          </ExternalLink>{" "}
-          today.
-        </span>
-      </ChatInfoContainer>
-    );
-  }
-  if (isDyadProEnabled && error.includes("ExceededBudget:")) {
-    return (
-      <ChatInfoContainer onDismiss={onDismiss}>
-        <span>
-          You have used all of your Dyad AI credits this month.{" "}
-          <ExternalLink href="https://academy.dyad.sh/subscription">
-            Upgrade to Dyad Max
-          </ExternalLink>{" "}
-          and get more AI credits
+          Looks like you don't have a valid API key configured. Please set up a
+          provider key in settings.
         </span>
       </ChatInfoContainer>
     );

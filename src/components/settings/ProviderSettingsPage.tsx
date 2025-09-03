@@ -9,8 +9,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {} from "@/components/ui/accordion";
 
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { showError } from "@/lib/toast";
 import { UserSettings } from "@/lib/schemas";
 
 import { ProviderSettingsHeader } from "./ProviderSettingsHeader";
@@ -42,22 +40,16 @@ export function ProviderSettingsPage({ provider }: ProviderSettingsPageProps) {
   const supportsCustomModels =
     providerData?.type === "custom" || providerData?.type === "cloud";
 
-  const isDyad = provider === "auto";
-
   const [apiKeyInput, setApiKeyInput] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Use fetched data (or defaults for Dyad)
-  const providerDisplayName = isDyad
-    ? "Dyad"
-    : (providerData?.name ?? "Unknown Provider");
-  const providerWebsiteUrl = isDyad
-    ? "https://academy.dyad.sh/settings"
-    : providerData?.websiteUrl;
-  const hasFreeTier = isDyad ? false : providerData?.hasFreeTier;
-  const envVarName = isDyad ? undefined : providerData?.envVarName;
+  // Use fetched data
+  const providerDisplayName = providerData?.name ?? "Unknown Provider";
+  const providerWebsiteUrl = providerData?.websiteUrl;
+  const hasFreeTier = providerData?.hasFreeTier;
+  const envVarName = providerData?.envVarName;
 
   // Use provider ID (which is the 'provider' prop)
   const userApiKey = settings?.providerSettings?.[provider]?.apiKey?.value;
@@ -98,9 +90,6 @@ export function ProviderSettingsPage({ provider }: ProviderSettingsPageProps) {
           },
         },
       };
-      if (isDyad) {
-        settingsUpdate.enableDyadPro = true;
-      }
       await updateSettings(settingsUpdate);
       setApiKeyInput(""); // Clear input on success
       // Optionally show a success message
@@ -130,20 +119,6 @@ export function ProviderSettingsPage({ provider }: ProviderSettingsPageProps) {
     } catch (error: any) {
       console.error("Error deleting API key:", error);
       setSaveError(error.message || "Failed to delete API key.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  // --- Toggle Dyad Pro Handler ---
-  const handleToggleDyadPro = async (enabled: boolean) => {
-    setIsSaving(true);
-    try {
-      await updateSettings({
-        enableDyadPro: enabled,
-      });
-    } catch (error: any) {
-      showError(`Error toggling Dyad Pro: ${error}`);
     } finally {
       setIsSaving(false);
     }
@@ -202,7 +177,7 @@ export function ProviderSettingsPage({ provider }: ProviderSettingsPageProps) {
   }
 
   // Handle case where provider is not found (e.g., invalid ID in URL)
-  if (!providerData && !isDyad) {
+  if (!providerData) {
     return (
       <div className="min-h-screen px-8 py-4">
         <div className="max-w-4xl mx-auto">
@@ -239,7 +214,6 @@ export function ProviderSettingsPage({ provider }: ProviderSettingsPageProps) {
           isLoading={settingsLoading}
           hasFreeTier={hasFreeTier}
           providerWebsiteUrl={providerWebsiteUrl}
-          isDyad={isDyad}
           onBackClick={() => router.history.back()}
         />
 
@@ -267,24 +241,7 @@ export function ProviderSettingsPage({ provider }: ProviderSettingsPageProps) {
             onApiKeyInputChange={setApiKeyInput}
             onSaveKey={handleSaveKey}
             onDeleteKey={handleDeleteKey}
-            isDyad={isDyad}
           />
-        )}
-
-        {isDyad && !settingsLoading && (
-          <div className="mt-6 flex items-center justify-between p-4 bg-(--background-lightest) rounded-lg border">
-            <div>
-              <h3 className="font-medium">Enable Dyad Pro</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Toggle to enable Dyad Pro
-              </p>
-            </div>
-            <Switch
-              checked={settings?.enableDyadPro}
-              onCheckedChange={handleToggleDyadPro}
-              disabled={isSaving}
-            />
-          </div>
         )}
 
         {/* Conditionally render CustomModelsSection */}

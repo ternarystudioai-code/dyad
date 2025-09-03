@@ -1,4 +1,4 @@
-import { isDyadProEnabled, type LargeLanguageModel } from "@/lib/schemas";
+import { type LargeLanguageModel } from "@/lib/schemas";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -119,8 +119,7 @@ export function ModelPicker() {
     return null;
   }
   const selectedModel = settings?.selectedModel;
-  const isSmartAutoEnabled =
-    settings.enableProSmartFilesContextMode && isDyadProEnabled(settings);
+  // Pro-only Smart Auto removed
   const modelDisplayName = getModelDisplayName();
 
   return (
@@ -192,18 +191,9 @@ export function ModelPicker() {
                       >
                         <div className="flex justify-between items-start w-full">
                           <span className="flex flex-col items-start">
-                            <span>
-                              {isSmartAutoEnabled
-                                ? "Smart Auto"
-                                : model.displayName}
-                            </span>
+                            <span>{model.displayName}</span>
                           </span>
                           <div className="flex items-center gap-1.5">
-                            {isSmartAutoEnabled && (
-                              <span className="text-[10px] bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-600 bg-[length:200%_100%] animate-[shimmer_5s_ease-in-out_infinite] text-white px-1.5 py-0.5 rounded-full font-medium">
-                                Dyad Pro
-                              </span>
-                            )}
                             {model.tag && (
                               <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-medium">
                                 {model.tag}
@@ -214,15 +204,7 @@ export function ModelPicker() {
                       </DropdownMenuItem>
                     </TooltipTrigger>
                     <TooltipContent side="right">
-                      {isSmartAutoEnabled ? (
-                        <p>
-                          <strong>Smart Auto</strong> uses a cheaper model for
-                          easier tasks
-                          <br /> and a flagship model for harder tasks
-                        </p>
-                      ) : (
-                        model.description
-                      )}
+                      {model.description}
                     </TooltipContent>
                   </Tooltip>
                 ))}

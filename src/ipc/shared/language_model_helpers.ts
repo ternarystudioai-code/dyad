@@ -8,7 +8,6 @@ import { eq } from "drizzle-orm";
 
 export const PROVIDERS_THAT_SUPPORT_THINKING: (keyof typeof MODEL_OPTIONS)[] = [
   "google",
-  "auto",
 ];
 
 export interface ModelOption {
@@ -197,20 +196,6 @@ export const MODEL_OPTIONS: Record<string, ModelOption[]> = {
       temperature: 0,
     },
   ],
-  auto: [
-    {
-      name: "auto",
-      displayName: "Auto",
-      description: "Automatically selects the best model",
-      tag: "Default",
-      // These are below Gemini 2.5 Pro & Flash limits
-      // which are the ones defaulted to for both regular auto
-      // and smart auto.
-      maxOutputTokens: 32_000,
-      contextWindow: 1_000_000,
-      temperature: 0,
-    },
-  ],
   azure: [
     {
       name: "gpt-5",
@@ -287,11 +272,6 @@ export const CLOUD_PROVIDERS: Record<
     hasFreeTier: true,
     websiteUrl: "https://openrouter.ai/settings/keys",
     gatewayPrefix: "openrouter/",
-  },
-  auto: {
-    displayName: "Dyad",
-    websiteUrl: "https://academy.dyad.sh/settings",
-    gatewayPrefix: "dyad/",
   },
   azure: {
     displayName: "Azure OpenAI",

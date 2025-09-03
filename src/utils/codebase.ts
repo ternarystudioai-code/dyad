@@ -6,7 +6,6 @@ import log from "electron-log";
 import { IS_TEST_BUILD } from "../ipc/utils/test_utils";
 import { glob } from "glob";
 import { AppChatContext } from "../lib/schemas";
-import { readSettings } from "@/main/settings";
 import { AsyncVirtualFileSystem } from "../../shared/VirtualFilesystem";
 
 const logger = log.scope("utils/codebase");
@@ -72,13 +71,7 @@ const ALWAYS_OMITTED_FILES = [".env", ".env.local"];
 // Why are we not using path.join here?
 // Because we have already normalized the path to use /.
 //
-// Note: these files are only omitted when NOT using smart context.
-//
-// Why do we omit these files when not using smart context?
-//
-// Because these files are typically low-signal and adding them
-// to the context can cause users to much more quickly hit their
-// free rate limits.
+// We omit some typically low-signal files to avoid unnecessary tokens.
 const OMITTED_FILES = [
   ...ALWAYS_OMITTED_FILES,
   "src/components/ui",
@@ -329,31 +322,6 @@ function shouldReadFileContents({
   );
 }
 
-function shouldReadFileContentsForSmartContext({
-  filePath,
-  normalizedRelativePath,
-}: {
-  filePath: string;
-  normalizedRelativePath: string;
-}): boolean {
-  const ext = path.extname(filePath).toLowerCase();
-  const fileName = path.basename(filePath);
-
-  // ALWAYS__OMITTED_FILES takes precedence - never read if omitted
-  if (
-    ALWAYS_OMITTED_FILES.some((pattern) =>
-      normalizedRelativePath.includes(pattern),
-    )
-  ) {
-    return false;
-  }
-
-  // Check if file should be included based on extension or filename
-  return (
-    ALLOWED_EXTENSIONS.includes(ext) || ALWAYS_INCLUDE_FILES.includes(fileName)
-  );
-}
-
 /**
  * Format a file for inclusion in the codebase extract
  */
@@ -425,10 +393,6 @@ export async function extractCodebase({
   formattedOutput: string;
   files: CodebaseFile[];
 }> {
-  const settings = readSettings();
-  const isSmartContextEnabled =
-    settings?.enableDyadPro && settings?.enableProSmartFilesContextMode;
-
   try {
     await fsAsync.access(appPath);
   } catch {
@@ -462,10 +426,9 @@ export async function extractCodebase({
     }
   }
 
-  // Collect files from contextPaths and smartContextAutoIncludes
-  const { contextPaths, smartContextAutoIncludes, excludePaths } = chatContext;
+  // Collect files from contextPaths and excludePaths
+  const { contextPaths, excludePaths } = chatContext;
   const includedFiles = new Set<string>();
-  const autoIncludedFiles = new Set<string>();
   const excludedFiles = new Set<string>();
 
   // Add files from contextPaths
@@ -483,30 +446,6 @@ export async function extractCodebase({
       matches.forEach((file) => {
         const normalizedFile = path.normalize(file);
         includedFiles.add(normalizedFile);
-      });
-    }
-  }
-
-  // Add files from smartContextAutoIncludes
-  if (
-    isSmartContextEnabled &&
-    smartContextAutoIncludes &&
-    smartContextAutoIncludes.length > 0
-  ) {
-    for (const p of smartContextAutoIncludes) {
-      const pattern = createFullGlobPath({
-        appPath,
-        globPath: p.globPath,
-      });
-      const matches = await glob(pattern, {
-        nodir: true,
-        absolute: true,
-        ignore: "**/node_modules/**",
-      });
-      matches.forEach((file) => {
-        const normalizedFile = path.normalize(file);
-        autoIncludedFiles.add(normalizedFile);
-        includedFiles.add(normalizedFile); // Also add to included files
       });
     }
   }
@@ -531,7 +470,6 @@ export async function extractCodebase({
   }
 
   // Only filter files if contextPaths are provided
-  // If only smartContextAutoIncludes are provided, keep all files and just mark auto-includes as forced
   if (contextPaths && contextPaths.length > 0) {
     files = files.filter((file) => includedFiles.has(path.normalize(file)));
   }
@@ -560,18 +498,11 @@ export async function extractCodebase({
       virtualFileSystem,
     });
 
-    const isForced =
-      autoIncludedFiles.has(path.normalize(file)) &&
-      !excludedFiles.has(path.normalize(file));
+    const isForced = false;
 
     // Determine file content based on whether we should read it
     let fileContent: string;
-    if (
-      !shouldReadFileContentsForSmartContext({
-        filePath: file,
-        normalizedRelativePath,
-      })
-    ) {
+    if (!shouldReadFileContents({ filePath: file, normalizedRelativePath })) {
       fileContent = OMITTED_FILE_CONTENT;
     } else {
       const readContent = await readFileWithCache(file, virtualFileSystem);

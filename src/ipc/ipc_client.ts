@@ -31,7 +31,6 @@ import type {
   ImportAppResult,
   ImportAppParams,
   RenameBranchParams,
-  UserBudgetInfo,
   CopyAppParams,
   App,
   ComponentSelection,
@@ -1063,11 +1062,6 @@ export class IpcClient {
 
   async clearSessionData(): Promise<void> {
     return this.ipcRenderer.invoke("clear-session-data");
-  }
-
-  // Method to get user budget information
-  public async getUserBudget(): Promise<UserBudgetInfo | null> {
-    return this.ipcRenderer.invoke("get-user-budget");
   }
 
   public async getChatContextResults(params: {

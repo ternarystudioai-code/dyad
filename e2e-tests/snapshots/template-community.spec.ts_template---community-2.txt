@@ -9,8 +9,6 @@
   "hasRunBefore": true,
   "experiments": {},
   "lastShownReleaseNotesVersion": "[scrubbed]",
-  "enableProLazyEditsMode": true,
-  "enableProSmartFilesContextMode": true,
   "selectedTemplateId": "jeff-kazzee/dyad-template-angular",
   "selectedChatMode": "build",
   "acceptedCommunityCode": true,

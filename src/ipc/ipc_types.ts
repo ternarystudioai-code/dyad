@@ -1,4 +1,3 @@
-import { z } from "zod";
 import type { ProblemReport, Problem } from "../../shared/tsc_types";
 export type { ProblemReport, Problem };
 
@@ -250,12 +249,7 @@ export interface RenameBranchParams {
   newBranchName: string;
 }
 
-export const UserBudgetInfoSchema = z.object({
-  usedCredits: z.number(),
-  totalCredits: z.number(),
-  budgetResetDate: z.date(),
-});
-export type UserBudgetInfo = z.infer<typeof UserBudgetInfoSchema>;
+// Pro budget info removed
 
 export interface ComponentSelection {
   id: string;

@@ -38,17 +38,17 @@ export function registerContextPathsHandlers() {
 
       const results: ContextPathResults = {
         contextPaths: [],
-        smartContextAutoIncludes: [],
         excludePaths: [],
       };
-      const { contextPaths, smartContextAutoIncludes, excludePaths } =
-        validateChatContext(app.chatContext);
+      const { contextPaths, excludePaths } = validateChatContext(
+        app.chatContext,
+      );
       for (const contextPath of contextPaths) {
         const { formattedOutput, files } = await extractCodebase({
           appPath,
           chatContext: {
             contextPaths: [contextPath],
-            smartContextAutoIncludes: [],
+            excludePaths: [],
           },
         });
         const totalTokens = estimateTokens(formattedOutput);
@@ -60,29 +60,12 @@ export function registerContextPathsHandlers() {
         });
       }
 
-      for (const contextPath of smartContextAutoIncludes) {
-        const { formattedOutput, files } = await extractCodebase({
-          appPath,
-          chatContext: {
-            contextPaths: [contextPath],
-            smartContextAutoIncludes: [],
-          },
-        });
-        const totalTokens = estimateTokens(formattedOutput);
-
-        results.smartContextAutoIncludes.push({
-          ...contextPath,
-          files: files.length,
-          tokens: totalTokens,
-        });
-      }
-
       for (const excludePath of excludePaths || []) {
         const { formattedOutput, files } = await extractCodebase({
           appPath,
           chatContext: {
             contextPaths: [excludePath],
-            smartContextAutoIncludes: [],
+            excludePaths: [],
           },
         });
         const totalTokens = estimateTokens(formattedOutput);
