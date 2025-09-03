@@ -1,7 +1,11 @@
 import { testSkipIfWindows } from "./helpers/test_helper";
 
 testSkipIfWindows("thinking budget", async ({ po }) => {
-  await po.selectModel({ provider: "Google", model: "Gemini 2.5 Pro" });
+  await po.goToSettingsTab();
+  await po.setUpTestProvider();
+  await po.setUpTestModel();
+  await po.goToAppsTab();
+  await po.selectTestModel();
   await po.sendPrompt("tc=1");
 
   // Low
