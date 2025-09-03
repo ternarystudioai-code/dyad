@@ -575,7 +575,14 @@ function createFullGlobPath({
   appPath: string;
   globPath: string;
 }): string {
-  // By default the glob package treats "\" as an escape character.
+  // By default the glob package treats "\\" as an escape character.
   // We want the path to use forward slash for all platforms.
-  return `${appPath.replace(/\\/g, "/")}/${globPath}`;
+  const normalizedGlob = globPath.replace(/\\/g, "/");
+  const normalized = `${appPath.replace(/\\/g, "/")}/${normalizedGlob}`;
+  // If the user provided a directory (ending with "/"), expand to include all files
+  // so that selections like "src/components/" work as expected.
+  if (normalizedGlob.endsWith("/")) {
+    return `${normalized}**/*`;
+  }
+  return normalized;
 }

@@ -50,14 +50,8 @@ export async function getModelClient(
 }> {
   const allProviders = await getLanguageModelProviders();
 
-  // --- Handle specific provider ---
-  const providerConfig = allProviders.find((p) => p.id === model.provider);
-
-  if (!providerConfig) {
-    throw new Error(`Configuration not found for provider: ${model.provider}`);
-  }
-
-  // Handle 'auto' provider by trying each model in AUTO_MODELS until one works
+  // Handle 'auto' provider BEFORE validating against provider list
+  // so we don't require a synthetic 'auto' provider entry.
   if (model.provider === "auto") {
     for (const autoModel of AUTO_MODELS) {
       const providerInfo = allProviders.find(
@@ -88,6 +82,12 @@ export async function getModelClient(
     throw new Error(
       "No API keys available for any model supported by the 'auto' provider.",
     );
+  }
+  // --- Handle specific provider ---
+  const providerConfig = allProviders.find((p) => p.id === model.provider);
+
+  if (!providerConfig) {
+    throw new Error(`Configuration not found for provider: ${model.provider}`);
   }
   return getRegularModelClient(model, settings, providerConfig);
 }

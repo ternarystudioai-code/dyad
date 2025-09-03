@@ -67,6 +67,10 @@ export function ModelPicker() {
 
   // Get display name for the selected model
   const getModelDisplayName = () => {
+    // Ensure a stable display for auto provider regardless of model list state
+    if (selectedModel.provider === "auto") {
+      return "Auto";
+    }
     if (selectedModel.provider === "ollama") {
       return (
         ollamaModels.find(
@@ -133,7 +137,7 @@ export function ModelPicker() {
               className="flex items-center gap-2 h-8 max-w-[130px] px-1.5 text-xs-sm"
             >
               <span className="truncate">
-                {modelDisplayName === "Auto" && (
+                {selectedModel.provider === "auto" && (
                   <>
                     <span className="text-xs text-muted-foreground">
                       Model:
