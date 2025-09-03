@@ -4,5 +4,7 @@
 - img
 - text: file1.txt
 - paragraph: More EOM
+- img
+- text: less than a minute ago
 - button "Retry":
   - img
