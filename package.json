@@ -1,12 +1,12 @@
 {
-  "name": "dyad",
-  "productName": "dyad",
-  "version": "0.19.0-beta.1",
+  "name": "ternary",
+  "productName": "ternary",
+  "version": "1.0.0-beta.1",
   "description": "Free, local, open-source AI app builder",
   "main": ".vite/build/main.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dyad-sh/dyad.git"
+    "url": "https://github.com/ternarystudio/ternary-app.git"
   },
   "engines": {
     "node": ">=20"
@@ -40,8 +40,8 @@
   },
   "keywords": [],
   "author": {
-    "name": "Will Chen",
-    "email": "willchen90@gmail.com"
+    "name": "Ternary",
+    "email": "ternarystudioai@gmail.com"
   },
   "license": "MIT",
   "devDependencies": {
@@ -88,7 +88,7 @@
     "@ai-sdk/openai-compatible": "^1.0.8",
     "@ai-sdk/provider-utils": "^3.0.3",
     "@biomejs/biome": "^1.9.4",
-    "@dyad-sh/supabase-management-js": "v1.0.0",
+    "@ternary-std/supabase-management-js": "v1.0.0",
     "@lexical/react": "^0.33.1",
     "@monaco-editor/react": "^4.7.0-rc.0",
     "@neondatabase/api-client": "^2.1.0",
@@ -162,5 +162,6 @@
   "lint-staged": {
     "**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,vue,astro,svelte}": "oxlint",
     "*.{js,css,md,ts,tsx,jsx,json}": "prettier --write"
-  }
+  },
+  "packageManager": "pnpm@10.15.1+sha512.34e538c329b5553014ca8e8f4535997f96180a1d0f614339357449935350d924e22f8614682191264ec33d1462ac21561aff97f6bb18065351c162c7e8f6de67"
 }

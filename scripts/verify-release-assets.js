@@ -17,8 +17,8 @@ async function verifyReleaseAssets() {
     console.log(`🔍 Verifying release assets for version ${version}...`);
 
     // GitHub API configuration
-    const owner = "dyad-sh";
-    const repo = "dyad";
+    const owner = "ternary-sh";
+    const repo = "ternary";
     const token = process.env.GITHUB_TOKEN;
 
     if (!token) {
@@ -35,7 +35,7 @@ async function verifyReleaseAssets() {
       headers: {
         Authorization: `token ${token}`,
         Accept: "application/vnd.github.v3+json",
-        "User-Agent": "dyad-release-verifier",
+        "User-Agent": "ternary-release-verifier",
       },
     });
 
@@ -81,12 +81,12 @@ async function verifyReleaseAssets() {
 
     // Define expected assets with platform-specific version handling
     const expectedAssets = [
-      `dyad-${normalizeVersionForPlatform(version, "rpm")}-1.x86_64.rpm`,
-      `dyad-${normalizeVersionForPlatform(version, "nupkg")}-full.nupkg`,
-      `dyad-${version}.Setup.exe`,
-      `dyad-darwin-arm64-${version}.zip`,
-      `dyad-darwin-x64-${version}.zip`,
-      `dyad_${normalizeVersionForPlatform(version, "deb")}_amd64.deb`,
+      `ternary-${normalizeVersionForPlatform(version, "rpm")}-1.x86_64.rpm`,
+      `ternary-${normalizeVersionForPlatform(version, "nupkg")}-full.nupkg`,
+      `ternary-${version}.Setup.exe`,
+      `ternary-darwin-arm64-${version}.zip`,
+      `ternary-darwin-x64-${version}.zip`,
+      `ternary_${normalizeVersionForPlatform(version, "deb")}_amd64.deb`,
       "RELEASES",
     ];
 

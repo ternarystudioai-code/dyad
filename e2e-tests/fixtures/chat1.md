@@ -1,3 +1,3 @@
 chat1
 
-<dyad-chat-summary>Chat 1</dyad-chat-summary>
+<ternary-chat-summary>Chat 1</ternary-chat-summary>

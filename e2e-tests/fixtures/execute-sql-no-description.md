@@ -1,7 +1,7 @@
 No description!
 
-<dyad-execute-sql>
+<ternary-execute-sql>
 DROP TABLE users;
-</dyad-execute-sql>
+</ternary-execute-sql>
 
 Done.

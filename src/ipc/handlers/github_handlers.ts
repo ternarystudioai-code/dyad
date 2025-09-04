@@ -5,7 +5,7 @@ import git from "isomorphic-git";
 import http from "isomorphic-git/http/node";
 import * as schema from "../../db/schema";
 import fs from "node:fs";
-import { getDyadAppPath } from "../../paths/paths";
+import { getTernaryAppPath } from "../../paths/paths";
 import { db } from "../../db";
 import { apps } from "../../db/schema";
 import { eq } from "drizzle-orm";
@@ -17,7 +17,7 @@ const logger = log.scope("github_handlers");
 
 // --- GitHub Device Flow Constants ---
 // TODO: Fetch this securely, e.g., from environment variables or a config file
-const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID || "Ov23liWV2HdC0RBLecWx";
+const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID || "Ov23lifsWjfpiLk2216J";
 
 // Use test server URLs when in test mode
 
@@ -565,7 +565,7 @@ async function handlePushToGithub(
     if (!app || !app.githubOrg || !app.githubRepo) {
       return { success: false, error: "App is not linked to a GitHub repo." };
     }
-    const appPath = getDyadAppPath(app.path);
+    const appPath = getTernaryAppPath(app.path);
     const branch = app.githubBranch || "main";
 
     // Set up remote URL with token

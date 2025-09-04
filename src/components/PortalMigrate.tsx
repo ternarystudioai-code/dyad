@@ -43,7 +43,7 @@ export const PortalMigrate = ({ appId }: PortalMigrateProps) => {
   const openDocs = () => {
     const ipcClient = IpcClient.getInstance();
     ipcClient.openExternalUrl(
-      "https://www.dyad.sh/docs/templates/portal#create-a-database-migration",
+      "https://ternary-pre-domain.vercel.app/docs/templates/portal#create-a-database-migration",
     );
   };
 

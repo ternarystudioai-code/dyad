@@ -38,12 +38,12 @@ if (started) {
 // https://www.electronjs.org/docs/latest/tutorial/launch-app-from-url-in-another-app#main-process-mainjs
 if (process.defaultApp) {
   if (process.argv.length >= 2) {
-    app.setAsDefaultProtocolClient("dyad", process.execPath, [
+    app.setAsDefaultProtocolClient("ternary", process.execPath, [
       path.resolve(process.argv[1]),
     ]);
   }
 } else {
-  app.setAsDefaultProtocolClient("dyad");
+  app.setAsDefaultProtocolClient("ternary");
 }
 
 export async function onReady() {
@@ -67,13 +67,13 @@ export async function onReady() {
     // but this is more explicit and falls back to stable if there's an unknown
     // release channel.
     const postfix = settings.releaseChannel === "beta" ? "beta" : "stable";
-    const host = `https://api.dyad.sh/v1/update/${postfix}`;
+    const host = `https://ternary-pre-domain.vercel.app/v1/update/${postfix}`;
     logger.info("Auto-update release channel=", postfix);
     updateElectronApp({
       logger,
       updateSource: {
         type: UpdateSourceType.ElectronPublicUpdateService,
-        repo: "dyad-sh/dyad",
+        repo: "ternary-sh/ternary",
         host,
       },
     }); // additional configuration options available
@@ -185,7 +185,7 @@ app.on("open-url", (event, url) => {
 });
 
 function handleDeepLinkReturn(url: string) {
-  // example url: "dyad://supabase-oauth-return?token=a&refreshToken=b"
+  // example url: "ternary://supabase-oauth-return?token=a&refreshToken=b"
   let parsed: URL;
   try {
     parsed = new URL(url);
@@ -201,10 +201,10 @@ function handleDeepLinkReturn(url: string) {
     "hostname",
     parsed.hostname,
   );
-  if (parsed.protocol !== "dyad:") {
+  if (parsed.protocol !== "ternary:") {
     dialog.showErrorBox(
       "Invalid Protocol",
-      `Expected dyad://, got ${parsed.protocol}. Full URL: ${url}`,
+      `Expected ternary://, got ${parsed.protocol}. Full URL: ${url}`,
     );
     return;
   }
@@ -244,7 +244,7 @@ function handleDeepLinkReturn(url: string) {
     });
     return;
   }
-  // Dyad Pro deep link removed
+  // Ternary Pro deep link removed
   dialog.showErrorBox("Invalid deep link URL", url);
 }
 

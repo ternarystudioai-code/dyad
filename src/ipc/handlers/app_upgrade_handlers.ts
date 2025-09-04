@@ -4,7 +4,7 @@ import { AppUpgrade } from "../ipc_types";
 import { db } from "../../db";
 import { apps } from "../../db/schema";
 import { eq } from "drizzle-orm";
-import { getDyadAppPath } from "../../paths/paths";
+import { getTernaryAppPath } from "../../paths/paths";
 import fs from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
@@ -19,15 +19,17 @@ const availableUpgrades: Omit<AppUpgrade, "isNeeded">[] = [
     id: "component-tagger",
     title: "Enable select component to edit",
     description:
-      "Installs the Dyad component tagger Vite plugin and its dependencies.",
-    manualUpgradeUrl: "https://dyad.sh/docs/upgrades/select-component",
+      "Installs the Ternary component tagger Vite plugin and its dependencies.",
+    manualUpgradeUrl:
+      "https://ternary-pre-domain.vercel.app/docs/upgrades/select-component",
   },
   {
     id: "capacitor",
     title: "Upgrade to hybrid mobile app with Capacitor",
     description:
       "Adds Capacitor to your app lets it run on iOS and Android in addition to the web.",
-    manualUpgradeUrl: "https://dyad.sh/docs/guides/mobile-app#upgrade-your-app",
+    manualUpgradeUrl:
+      "https://ternary-pre-domain.vercel.app/docs/guides/mobile-app#upgrade-your-app",
   },
 ];
 
@@ -63,7 +65,9 @@ function isComponentTaggerUpgradeNeeded(appPath: string): boolean {
 
   try {
     const viteConfigContent = fs.readFileSync(viteConfigPath, "utf-8");
-    return !viteConfigContent.includes("@dyad-sh/react-vite-component-tagger");
+    return !viteConfigContent.includes(
+      "@ternary-sh/react-vite-component-tagger",
+    );
   } catch (e) {
     logger.error("Error reading vite config", e);
     return false;
@@ -111,7 +115,7 @@ async function applyComponentTagger(appPath: string) {
   // Add import statement if not present
   if (
     !content.includes(
-      "import dyadComponentTagger from '@dyad-sh/react-vite-component-tagger';",
+      "import ternaryComponentTagger from '@ternary-sh/react-vite-component-tagger';",
     )
   ) {
     // Add it after the last import statement
@@ -126,17 +130,17 @@ async function applyComponentTagger(appPath: string) {
     lines.splice(
       lastImportIndex + 1,
       0,
-      "import dyadComponentTagger from '@dyad-sh/react-vite-component-tagger';",
+      "import ternaryComponentTagger from '@ternary-sh/react-vite-component-tagger';",
     );
     content = lines.join("\n");
   }
 
   // Add plugin to plugins array
   if (content.includes("plugins: [")) {
-    if (!content.includes("dyadComponentTagger()")) {
+    if (!content.includes("ternaryComponentTagger()")) {
       content = content.replace(
         "plugins: [",
-        "plugins: [dyadComponentTagger(), ",
+        "plugins: [ternaryComponentTagger(), ",
       );
     }
   } else {
@@ -151,7 +155,7 @@ async function applyComponentTagger(appPath: string) {
   await new Promise<void>((resolve, reject) => {
     logger.info("Installing component-tagger dependency");
     const process = spawn(
-      "pnpm add -D @dyad-sh/react-vite-component-tagger || npm install --save-dev --legacy-peer-deps @dyad-sh/react-vite-component-tagger",
+      "pnpm add -D @ternary-sh/react-vite-component-tagger || npm install --save-dev --legacy-peer-deps @ternary-sh/react-vite-component-tagger",
       {
         cwd: appPath,
         shell: true,
@@ -184,7 +188,7 @@ async function applyComponentTagger(appPath: string) {
     await gitAddAll({ path: appPath });
     await gitCommit({
       path: appPath,
-      message: "[dyad] add Dyad component tagger",
+      message: "[ternary] add Ternary component tagger",
     });
     logger.info("Successfully committed changes");
   } catch (err) {
@@ -233,7 +237,7 @@ async function applyCapacitor({
     await gitAddAll({ path: appPath });
     await gitCommit({
       path: appPath,
-      message: "[dyad] add Capacitor for mobile app support",
+      message: "[ternary] add Capacitor for mobile app support",
     });
     logger.info("Successfully committed Capacitor changes");
   } catch (err) {
@@ -253,7 +257,7 @@ export function registerAppUpgradeHandlers() {
     "get-app-upgrades",
     async (_, { appId }: { appId: number }): Promise<AppUpgrade[]> => {
       const app = await getApp(appId);
-      const appPath = getDyadAppPath(app.path);
+      const appPath = getTernaryAppPath(app.path);
 
       const upgradesWithStatus = availableUpgrades.map((upgrade) => {
         let isNeeded = false;
@@ -277,7 +281,7 @@ export function registerAppUpgradeHandlers() {
       }
 
       const app = await getApp(appId);
-      const appPath = getDyadAppPath(app.path);
+      const appPath = getTernaryAppPath(app.path);
 
       if (upgradeId === "component-tagger") {
         await applyComponentTagger(appPath);

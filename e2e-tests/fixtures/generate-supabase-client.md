@@ -1,5 +1,5 @@
 BEGIN
-<dyad-write path="src/integrations/supabase/client.ts" description="Creating a supabase client.">
+<ternary-write path="src/integrations/supabase/client.ts" description="Creating a supabase client.">
 $$SUPABASE_CLIENT_CODE$$
-</dyad-write>
+</ternary-write>
 END

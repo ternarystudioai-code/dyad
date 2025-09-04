@@ -109,7 +109,7 @@ export function ContextFilesPicker() {
                     </span>
                   </TooltipTrigger>
                   <TooltipContent className="max-w-[300px]">
-                    <p>By default, Dyad uses your whole codebase.</p>
+                    <p>By default, Ternary uses your whole codebase.</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -177,7 +177,7 @@ export function ContextFilesPicker() {
             ) : (
               <div className="rounded-md border border-dashed p-4 text-center">
                 <p className="text-sm text-muted-foreground">
-                  Dyad will use the entire codebase as context.
+                  Ternary will use the entire codebase as context.
                 </p>
               </div>
             )}
