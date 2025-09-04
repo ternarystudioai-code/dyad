@@ -20,11 +20,11 @@ export function AutoUpdateSwitch() {
           updateSettings({ enableAutoUpdate: checked });
           toast("Auto-update settings changed", {
             description:
-              "You will need to restart Dyad for your settings to take effect.",
+              "You will need to restart Ternary for your settings to take effect.",
             action: {
-              label: "Restart Dyad",
+              label: "Restart Ternary",
               onClick: () => {
-                IpcClient.getInstance().restartDyad();
+                IpcClient.getInstance().restartTernary();
               },
             },
           });

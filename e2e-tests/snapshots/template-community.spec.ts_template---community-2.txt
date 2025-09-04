@@ -9,7 +9,7 @@
   "hasRunBefore": true,
   "experiments": {},
   "lastShownReleaseNotesVersion": "[scrubbed]",
-  "selectedTemplateId": "jeff-kazzee/dyad-template-angular",
+  "selectedTemplateId": "jeff-kazzee/ternary-template-angular",
   "selectedChatMode": "build",
   "acceptedCommunityCode": true,
   "enableAutoFixProblems": false,

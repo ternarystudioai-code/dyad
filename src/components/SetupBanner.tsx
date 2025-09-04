@@ -125,7 +125,7 @@ export function SetupBanner() {
   return (
     <>
       <p className="text-xl text-zinc-700 dark:text-zinc-300 p-4">
-        Follow these steps and you'll be ready to start building with Dyad...
+        Follow these steps and you'll be ready to start building with Ternary...
       </p>
       <div className={bannerClasses}>
         <Accordion
@@ -343,7 +343,8 @@ function NodeInstallButton({
     case "finished-checking":
       return (
         <div className="mt-3 text-sm text-red-600 dark:text-red-400">
-          Node.js not detected. Closing and re-opening Dyad usually fixes this.
+          Node.js not detected. Closing and re-opening Ternary usually fixes
+          this.
         </div>
       );
     default:

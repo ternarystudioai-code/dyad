@@ -345,7 +345,7 @@ export class PageObject {
     replaceDumpPath = false,
   }: { replaceDumpPath?: boolean } = {}) {
     if (replaceDumpPath) {
-      // Update page so that "[[dyad-dump-path=*]]" is replaced with a placeholder path
+      // Update page so that "[[ternary-dump-path=*]]" is replaced with a placeholder path
       // which is stable across runs.
       await this.page.evaluate(() => {
         const messagesList = document.querySelector(
@@ -355,8 +355,8 @@ export class PageObject {
           throw new Error("Messages list not found");
         }
         messagesList.innerHTML = messagesList.innerHTML.replace(
-          /\[\[dyad-dump-path=([^\]]+)\]\]/g,
-          "[[dyad-dump-path=*]]",
+          /\[\[ternary-dump-path=([^\]]+)\]\]/g,
+          "[[ternary-dump-path=*]]",
         );
       });
     }
@@ -500,7 +500,7 @@ export class PageObject {
 
     // Find ALL dump paths using global regex
     const dumpPathMatches = messagesListText?.match(
-      /\[\[dyad-dump-path=([^\]]+)\]\]/g,
+      /\[\[ternary-dump-path=([^\]]+)\]\]/g,
     );
 
     if (!dumpPathMatches || dumpPathMatches.length === 0) {
@@ -510,7 +510,7 @@ export class PageObject {
     // Extract the actual paths from the matches
     const dumpPaths = dumpPathMatches
       .map((match) => {
-        const pathMatch = match.match(/\[\[dyad-dump-path=([^\]]+)\]\]/);
+        const pathMatch = match.match(/\[\[ternary-dump-path=([^\]]+)\]\]/);
         return pathMatch ? pathMatch[1] : null;
       })
       .filter(Boolean);
@@ -535,7 +535,10 @@ export class PageObject {
     // Read the JSON file
     const dumpContent: string = (
       fs.readFileSync(dumpFilePath, "utf-8") as any
-    ).replaceAll(/\[\[dyad-dump-path=([^\]]+)\]\]/g, "[[dyad-dump-path=*]]");
+    ).replaceAll(
+      /\[\[ternary-dump-path=([^\]]+)\]\]/g,
+      "[[ternary-dump-path=*]]",
+    );
     // Perform snapshot comparison
     const parsedDump = JSON.parse(dumpContent);
     if (type === "request") {
@@ -591,7 +594,7 @@ export class PageObject {
 
   getChatInput() {
     return this.page.locator(
-      '[data-lexical-editor="true"][aria-placeholder="Ask Dyad to build..."]',
+      '[data-lexical-editor="true"][aria-placeholder="Ask Ternary to build..."]',
     );
   }
 
@@ -756,7 +759,7 @@ export class PageObject {
   }
 
   getAppPath({ appName }: { appName: string }) {
-    return path.join(this.userDataDir, "dyad-apps", appName);
+    return path.join(this.userDataDir, "ternary-apps", appName);
   }
 
   async clickAppListItem({ appName }: { appName: string }) {
@@ -967,7 +970,7 @@ export const test = base.extend<{
       const page = await electronApp.firstWindow();
 
       const po = new PageObject(electronApp, page, {
-        userDataDir: (electronApp as any).$dyadUserDataDir,
+        userDataDir: (electronApp as any).$ternaryUserDataDir,
       });
       await use(po);
     },
@@ -1006,7 +1009,10 @@ export const test = base.extend<{
       // This is just a hack to avoid the AI setup screen.
       process.env.OPENAI_API_KEY = "sk-test";
       const baseTmpDir = os.tmpdir();
-      const userDataDir = path.join(baseTmpDir, `dyad-e2e-tests-${Date.now()}`);
+      const userDataDir = path.join(
+        baseTmpDir,
+        `ternary-e2e-tests-${Date.now()}`,
+      );
       if (electronConfig.preLaunchHook) {
         await electronConfig.preLaunchHook({ userDataDir });
       }
@@ -1023,7 +1029,7 @@ export const test = base.extend<{
         //   dir: "test-results",
         // },
       });
-      (electronApp as any).$dyadUserDataDir = userDataDir;
+      (electronApp as any).$ternaryUserDataDir = userDataDir;
 
       console.log("electronApp launched!");
       if (showDebugLogs) {
@@ -1061,14 +1067,14 @@ export const test = base.extend<{
       // Windows' strict resource locking (e.g. file locking).
       if (os.platform() === "win32") {
         try {
-          console.log("[cleanup:start] Killing dyad.exe");
+          console.log("[cleanup:start] Killing ternary.exe");
           console.time("taskkill");
-          execSync("taskkill /f /t /im dyad.exe");
+          execSync("taskkill /f /t /im ternary.exe");
           console.timeEnd("taskkill");
-          console.log("[cleanup:end] Killed dyad.exe");
+          console.log("[cleanup:end] Killed ternary.exe");
         } catch (error) {
           console.warn(
-            "Failed to kill dyad.exe: (continuing with test cleanup)",
+            "Failed to kill ternary.exe: (continuing with test cleanup)",
             error,
           );
         }
@@ -1113,7 +1119,7 @@ function prettifyDump(
             // Depending on whether pnpm install is run, it will be modified,
             // and the contents and timestamp (thus affecting order) will be affected.
             .replace(
-              /\n<dyad-file path="package\.json">[\s\S]*?<\/dyad-file>\n/g,
+              /\n<ternary-file path="package\.json">[\s\S]*?<\/ternary-file>\n/g,
               "",
             );
       return `===\nrole: ${message.role}\nmessage: ${content}`;

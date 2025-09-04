@@ -73,7 +73,7 @@ export const REDDIT_TIP: MessageConfig = {
     },
     {
       type: "link",
-      content: "Dyad subreddit",
+      content: "Ternary subreddit",
       url: "https://www.reddit.com/r/TernaryDeveloper/",
     },
   ],
@@ -151,17 +151,17 @@ export const ROADMAP_TIP: MessageConfig = {
   ],
 };
 
-// Like Dyad? Star it on GitHub https://github.com/ternarystudioai-code/dyad/
+// Like Ternary? Star it on GitHub https://github.com/ternarystudioai-code/ternary/
 export const GITHUB_TIP: MessageConfig = {
   spans: [
     {
       type: "text",
-      content: "Like Dyad? Star it on ",
+      content: "Like Ternary? Star it on ",
     },
     {
       type: "link",
       content: "GitHub",
-      url: "https://github.com/ternarystudioai-code/dyad",
+      url: "https://github.com/ternarystudioai-code/ternary",
     },
   ],
 };

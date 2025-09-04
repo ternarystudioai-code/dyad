@@ -128,7 +128,7 @@ export interface SystemDebugInfo {
   telemetryId: string;
   telemetryConsent: string;
   telemetryUrl: string;
-  dyadVersion: string;
+  ternaryVersion: string;
   platform: string;
   architecture: string;
   logs: string;
