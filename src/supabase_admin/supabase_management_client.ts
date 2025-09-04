@@ -46,7 +46,7 @@ export async function refreshSupabaseToken(): Promise<void> {
   try {
     // Make request to Supabase refresh endpoint
     const response = await fetch(
-      "https://mtxfmmvbwwdtklxsqufy.supabase.co/functions/v1//connect-supabase/refresh",
+      "https://ternary-pre-domain.vercel.app/api/connect-supabase/refresh",
       {
         method: "POST",
         headers: {

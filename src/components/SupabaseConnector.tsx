@@ -210,7 +210,7 @@ export function SupabaseConnector({ appId }: { appId: number }) {
               });
             } else {
               await IpcClient.getInstance().openExternalUrl(
-                "https://mtxfmmvbwwdtklxsqufy.supabase.co/functions/v1/connect-supabase/login",
+                "https://ternary-pre-domain.vercel.app/api/connect-supabase/login",
               );
             }
           }}

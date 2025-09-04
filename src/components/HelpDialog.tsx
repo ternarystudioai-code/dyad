@@ -156,9 +156,9 @@ ${debugInfo.logs.slice(-3_500) || "No logs available"}
         codebaseSnippet: chatLogsData.codebase,
       };
 
-      // Get signed URL
+      // Get signed URL (our server)
       const response = await fetch(
-        "https://upload-logs.dyad.sh/generate-upload-url",
+        "https://ternary-pre-domain.vercel.app/api/log-uploads/generate-upload-url",
         {
           method: "POST",
           headers: {
