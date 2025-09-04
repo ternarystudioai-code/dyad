@@ -8,6 +8,21 @@ const logger = log.scope("release_note_handlers");
 
 const handle = createLoggedHandler(logger);
 
+// Base URL where docs are served. Use env override if provided; default to local dev site.
+// We intentionally default to http for localhost to avoid SSL errors.
+const DOCS_BASE_URL =
+  process.env.WEBSITE_BASE_URL?.replace(/\/$/, "") ||
+  "http://ternary-pre-domain.vercel.app";
+
+function versionToSlug(version: string): string {
+  // Normalize common prerelease patterns like beta.1 -> beta-1, rc.1 -> rc-1, alpha.1 -> alpha-1
+  // Also ensure lowercase and replace spaces with dashes
+  return version
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/(beta|rc|alpha)\.(\d+)/gi, "$1-$2");
+}
+
 export function registerReleaseNoteHandlers() {
   handle(
     "does-release-note-exist",
@@ -23,7 +38,10 @@ export function registerReleaseNoteHandlers() {
       if (IS_TEST_BUILD) {
         return { exists: false };
       }
-      const releaseNoteUrl = `https://www.dyad.sh/docs/releases/${version}`;
+      const slug = versionToSlug(version);
+      const releaseNoteUrl = `${DOCS_BASE_URL}/docs/releases/${encodeURIComponent(
+        slug,
+      )}?embed=1`;
 
       logger.debug(`Checking for release note at: ${releaseNoteUrl}`);
 

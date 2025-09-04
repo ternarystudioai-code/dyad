@@ -22,7 +22,6 @@ import { useAtomValue } from "jotai";
 import { selectedChatIdAtom } from "@/atoms/chatAtoms";
 import { ChatLogsData } from "@/ipc/ipc_types";
 import { showError } from "@/lib/toast";
-// Pro HelpBot removed
 
 interface HelpDialogProps {
   isOpen: boolean;
@@ -36,7 +35,7 @@ export function HelpDialog({ isOpen, onClose }: HelpDialogProps) {
   const [chatLogsData, setChatLogsData] = useState<ChatLogsData | null>(null);
   const [uploadComplete, setUploadComplete] = useState(false);
   const [sessionId, setSessionId] = useState("");
-  // Help bot removed
+
   const selectedChatId = useAtomValue(selectedChatIdAtom);
 
   // Function to reset all dialog state
@@ -380,7 +379,7 @@ Session ID: ${sessionId}
               variant="outline"
               onClick={() => {
                 IpcClient.getInstance().openExternalUrl(
-                  "https://www.dyad.sh/docs",
+                  "https://ternary-pre-domain.vercel.app/docs",
                 );
               }}
               className="w-full py-6 bg-(--background-lightest)"
@@ -424,7 +423,6 @@ Session ID: ${sessionId}
           </div>
         </div>
       </DialogContent>
-      {/* HelpBotDialog removed */}
     </Dialog>
   );
 }

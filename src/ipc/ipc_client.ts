@@ -188,48 +188,6 @@ export class IpcClient {
         console.error("[IPC] Invalid error data received:", error);
       }
     });
-
-    // Help bot events
-    this.ipcRenderer.on("help:chat:response:chunk", (data) => {
-      if (
-        data &&
-        typeof data === "object" &&
-        "sessionId" in data &&
-        "delta" in data
-      ) {
-        const { sessionId, delta } = data as {
-          sessionId: string;
-          delta: string;
-        };
-        const callbacks = this.helpStreams.get(sessionId);
-        if (callbacks) callbacks.onChunk(delta);
-      }
-    });
-
-    this.ipcRenderer.on("help:chat:response:end", (data) => {
-      if (data && typeof data === "object" && "sessionId" in data) {
-        const { sessionId } = data as { sessionId: string };
-        const callbacks = this.helpStreams.get(sessionId);
-        if (callbacks) callbacks.onEnd();
-        this.helpStreams.delete(sessionId);
-      }
-    });
-    this.ipcRenderer.on("help:chat:response:error", (data) => {
-      if (
-        data &&
-        typeof data === "object" &&
-        "sessionId" in data &&
-        "error" in data
-      ) {
-        const { sessionId, error } = data as {
-          sessionId: string;
-          error: string;
-        };
-        const callbacks = this.helpStreams.get(sessionId);
-        if (callbacks) callbacks.onError(error);
-        this.helpStreams.delete(sessionId);
-      }
-    });
   }
 
   public static getInstance(): IpcClient {
@@ -1133,29 +1091,5 @@ export class IpcClient {
 
   public async deletePrompt(id: number): Promise<void> {
     await this.ipcRenderer.invoke("prompts:delete", id);
-  }
-
-  // --- Help bot ---
-  public startHelpChat(
-    sessionId: string,
-    message: string,
-    options: {
-      onChunk: (delta: string) => void;
-      onEnd: () => void;
-      onError: (error: string) => void;
-    },
-  ): void {
-    this.helpStreams.set(sessionId, options);
-    this.ipcRenderer
-      .invoke("help:chat:start", { sessionId, message })
-      .catch((err) => {
-        this.helpStreams.delete(sessionId);
-        showError(err);
-        options.onError(String(err));
-      });
-  }
-
-  public cancelHelpChat(sessionId: string): void {
-    this.ipcRenderer.invoke("help:chat:cancel", sessionId).catch(() => {});
   }
 }

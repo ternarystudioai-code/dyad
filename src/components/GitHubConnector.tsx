@@ -204,7 +204,7 @@ function ConnectedGitHubConnector({
               onClick={(e) => {
                 e.preventDefault();
                 IpcClient.getInstance().openExternalUrl(
-                  "https://www.dyad.sh/docs/integrations/github#troubleshooting",
+                  "https://ternary-pre-domain.vercel.app/docs/integrations/github#troubleshooting",
                 );
               }}
               className="cursor-pointer text-blue-600 hover:underline dark:text-blue-400"

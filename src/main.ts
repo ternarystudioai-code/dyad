@@ -67,7 +67,7 @@ export async function onReady() {
     // but this is more explicit and falls back to stable if there's an unknown
     // release channel.
     const postfix = settings.releaseChannel === "beta" ? "beta" : "stable";
-    const host = `https://api.dyad.sh/v1/update/${postfix}`;
+    const host = `https://ternary-pre-domain.vercel.app/v1/update/${postfix}`;
     logger.info("Auto-update release channel=", postfix);
     updateElectronApp({
       logger,

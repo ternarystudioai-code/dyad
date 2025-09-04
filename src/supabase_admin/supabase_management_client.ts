@@ -46,7 +46,7 @@ export async function refreshSupabaseToken(): Promise<void> {
   try {
     // Make request to Supabase refresh endpoint
     const response = await fetch(
-      "https://supabase-oauth.dyad.sh/api/connect-supabase/refresh",
+      "https://mtxfmmvbwwdtklxsqufy.supabase.co/functions/v1//connect-supabase/refresh",
       {
         method: "POST",
         headers: {

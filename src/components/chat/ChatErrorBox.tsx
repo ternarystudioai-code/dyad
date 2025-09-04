@@ -30,7 +30,7 @@ export function ChatErrorBox({
         {error}
         or read the
         <span className="ml-1">
-          <ExternalLink href="https://dyad.sh/docs/help/ai-rate-limit">
+          <ExternalLink href="https://ternary-pre-domain.vercel.app/docs/help/ai-rate-limit">
             Rate limit troubleshooting guide.
           </ExternalLink>
         </span>

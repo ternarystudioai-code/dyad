@@ -74,7 +74,7 @@ export const REDDIT_TIP: MessageConfig = {
     {
       type: "link",
       content: "Dyad subreddit",
-      url: "https://www.reddit.com/r/dyadbuilders/",
+      url: "https://www.reddit.com/r/TernaryDeveloper/",
     },
   ],
 };
@@ -121,7 +121,7 @@ export const DEBUGGING_TIPS_TIP: MessageConfig = {
     {
       type: "link",
       content: "debugging tips",
-      url: "https://www.dyad.sh/docs/guides/debugging",
+      url: "https://ternary-pre-domain.vercel.app/docs/guides/debugging",
     },
   ],
 };
@@ -136,7 +136,7 @@ export const AI_RULES_TIP: MessageConfig = {
     {
       type: "link",
       content: "AI rules",
-      url: "https://www.dyad.sh/docs/guides/ai-rules",
+      url: "https://ternary-pre-domain.vercel.app/docs/guides/ai-rules",
     },
   ],
 };
@@ -160,7 +160,7 @@ export const ROADMAP_TIP: MessageConfig = {
     {
       type: "link",
       content: "roadmap",
-      url: "https://www.dyad.sh/docs/roadmap",
+      url: "https://ternary-pre-domain.vercel.app/docs/roadmap",
     },
   ],
 };

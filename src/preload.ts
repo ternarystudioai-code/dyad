@@ -105,10 +105,6 @@ const validInvokeChannels = [
   "restart-dyad",
   "get-templates",
   "portal:migrate-create",
-  // Help bot
-  "help:chat:start",
-  "help:chat:cancel",
-  // Prompts
   "prompts:list",
   "prompts:create",
   "prompts:update",
@@ -130,10 +126,6 @@ const validReceiveChannels = [
   "github:flow-success",
   "github:flow-error",
   "deep-link-received",
-  // Help bot
-  "help:chat:response:chunk",
-  "help:chat:response:end",
-  "help:chat:response:error",
 ] as const;
 
 type ValidInvokeChannel = (typeof validInvokeChannels)[number];
