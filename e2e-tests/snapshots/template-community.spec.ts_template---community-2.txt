@@ -9,7 +9,7 @@
   "hasRunBefore": true,
   "experiments": {},
   "lastShownReleaseNotesVersion": "[scrubbed]",
-  "selectedTemplateId": "jeff-kazzee/ternary-template-angular",
+  "selectedTemplateId": "ternarystudio/ternary-template-angular",
   "selectedChatMode": "build",
   "acceptedCommunityCode": true,
   "enableAutoFixProblems": false,
