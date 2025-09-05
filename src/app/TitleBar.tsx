@@ -8,6 +8,8 @@ import logo from "../../assets/logo.svg";
 import { useEffect, useState } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { IpcClient } from "@/ipc/ipc_client";
+import { useTernaryAccount } from "@/hooks/useTernaryAccount";
+import { WEBSITE_BASE } from "@/constants/website";
 
 import { PreviewHeader } from "@/components/preview_panel/PreviewHeader";
 
@@ -63,10 +65,17 @@ export const TitleBar = () => {
         </Button>
         {/* Pro UI removed */}
 
-        {/* Preview Header */}
-        {location.pathname === "/chat" && (
-          <div className="flex-1 flex justify-end">
+        {/* Right side content */}
+        {location.pathname === "/chat" ? (
+          <div className="flex-1 flex items-center justify-end gap-3">
             <PreviewHeader />
+            <AccountBar />
+            <UpgradeBanner />
+          </div>
+        ) : (
+          <div className="ml-auto flex items-center gap-3">
+            <AccountBar />
+            <UpgradeBanner />
           </div>
         )}
 
@@ -75,6 +84,105 @@ export const TitleBar = () => {
     </>
   );
 };
+
+function AccountBar() {
+  const { loading, linked, me, signIn, signOutLocal, linkWithCode } =
+    useTernaryAccount();
+  const ipc = IpcClient.getInstance();
+
+  const manage = () => ipc.openExternalUrl(`${WEBSITE_BASE}/dashboard`);
+  const planLower = (me?.plan || "free").toLowerCase();
+  const upgradeVisible = !loading && (!linked || planLower === "free");
+
+  return (
+    <div className="no-app-region-drag flex items-center gap-2 text-xs">
+      {loading ? (
+        <span className="opacity-70">Account…</span>
+      ) : !linked ? (
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={signIn}
+            className="h-7 py-1"
+          >
+            Sign in
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={linkWithCode}
+            className="h-7 py-1"
+          >
+            Link with code
+          </Button>
+        </div>
+      ) : (
+        <>
+          <div className="max-w-48 truncate" title={me?.email || "Linked"}>
+            {me?.email || "Linked"}
+          </div>
+          {/* Only show plan badge here when the UpgradeBanner is NOT visible to avoid duplication */}
+          {!upgradeVisible && (
+            <span className="px-2 py-0.5 rounded bg-zinc-800/60 text-zinc-200">
+              {me?.plan || "free"}
+            </span>
+          )}
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-7 py-1"
+            onClick={manage}
+          >
+            Manage
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-7 py-1"
+            onClick={signOutLocal}
+          >
+            Sign out
+          </Button>
+        </>
+      )}
+    </div>
+  );
+}
+
+function UpgradeBanner() {
+  const { loading, linked, me } = useTernaryAccount();
+  const ipc = IpcClient.getInstance();
+  const plan = (me?.plan || "free").toLowerCase();
+  const planLabel = me?.plan ? String(me.plan) : "Free";
+  // Show only for unsigned or free users. Hide for Pro and Team plans.
+  const shouldShow = !loading && (!linked || plan === "free");
+  const goPricing = () => ipc.openExternalUrl(`${WEBSITE_BASE}/#pricing`);
+
+  if (!shouldShow) return null;
+
+  return (
+    <div className="no-app-region-drag hidden sm:flex items-center gap-2 text-xs">
+      <span className="text-zinc-400">Plan:</span>
+      <button
+        className="px-2 py-1 rounded bg-zinc-800/60 hover:bg-zinc-700 text-zinc-200"
+        onClick={goPricing}
+        title="View plans"
+      >
+        {planLabel}
+      </button>
+      <span className="text-zinc-500">→</span>
+      <Button
+        size="sm"
+        variant="secondary"
+        className="h-7 py-1"
+        onClick={goPricing}
+      >
+        Upgrade to Pro
+      </Button>
+    </div>
+  );
+}
 
 function WindowsControls() {
   const { isDarkMode } = useTheme();

@@ -164,6 +164,11 @@ export const UserSettingsSchema = z.object({
   releaseChannel: ReleaseChannelSchema,
   runtimeMode2: RuntimeMode2Schema.optional(),
 
+  // Ternary App linking
+  ternaryAppToken: SecretSchema.optional(),
+  ternaryDeviceId: z.string().optional(),
+  ternaryLinkState: z.string().optional(),
+
   ////////////////////////////////
   // E2E TESTING ONLY.
   ////////////////////////////////

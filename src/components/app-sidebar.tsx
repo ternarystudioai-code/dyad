@@ -149,11 +149,11 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            {/* Change button to open dialog instead of linking */}
+            {/* Help button opens dialog */}
             <SidebarMenuButton
               size="sm"
               className="font-medium w-14 flex flex-col items-center gap-1 h-14 mb-2 rounded-2xl"
-              onClick={() => setIsHelpDialogOpen(true)} // Open dialog on click
+              onClick={() => setIsHelpDialogOpen(true)}
             >
               <HelpCircle className="h-5 w-5" />
               <span className={"text-xs"}>Help</span>

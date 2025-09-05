@@ -244,7 +244,39 @@ function handleDeepLinkReturn(url: string) {
     });
     return;
   }
-  // Ternary Pro deep link removed
+  if (parsed.hostname === "link" || parsed.hostname === "link/callback") {
+    const token = parsed.searchParams.get("token");
+    const deviceId = parsed.searchParams.get("device_id");
+    const state = parsed.searchParams.get("state");
+    if (!token || !deviceId || !state) {
+      dialog.showErrorBox(
+        "Invalid URL",
+        "Expected token, device_id, and state",
+      );
+      return;
+    }
+    // Validate state
+    const settings = readSettings();
+    const expected = settings.ternaryLinkState;
+    if (expected && expected !== state) {
+      dialog.showErrorBox(
+        "Link failed",
+        "State mismatch. Please try linking again.",
+      );
+      return;
+    }
+    // Persist into settings
+    writeSettings({
+      ternaryAppToken: { value: token, encryptionType: undefined },
+      ternaryDeviceId: deviceId,
+      ternaryLinkState: undefined,
+    });
+    mainWindow?.webContents.send("deep-link-received", {
+      type: "ternary-link",
+    });
+    return;
+  }
+  // Unknown deep link
   dialog.showErrorBox("Invalid deep link URL", url);
 }
 

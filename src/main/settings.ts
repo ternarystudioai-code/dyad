@@ -96,6 +96,13 @@ export function readSettings(): UserSettings {
         encryptionType,
       };
     }
+    if (combinedSettings.ternaryAppToken) {
+      const encryptionType = combinedSettings.ternaryAppToken.encryptionType;
+      combinedSettings.ternaryAppToken = {
+        value: decrypt(combinedSettings.ternaryAppToken),
+        encryptionType,
+      };
+    }
     if (combinedSettings.vercelAccessToken) {
       const encryptionType = combinedSettings.vercelAccessToken.encryptionType;
       combinedSettings.vercelAccessToken = {
@@ -133,6 +140,9 @@ export function writeSettings(settings: Partial<UserSettings>): void {
       newSettings.githubAccessToken = encrypt(
         newSettings.githubAccessToken.value,
       );
+    }
+    if (newSettings.ternaryAppToken) {
+      newSettings.ternaryAppToken = encrypt(newSettings.ternaryAppToken.value);
     }
     if (newSettings.vercelAccessToken) {
       newSettings.vercelAccessToken = encrypt(
