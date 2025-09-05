@@ -10,7 +10,7 @@
 - text: less than a minute ago
 - img
 - text: wrote 1 file(s)
-- paragraph: "/Fix error: Error Line 6 error Stack trace: Index \\(https:\\/\\/localhost:\\d+\\/src\\/pages\\/Index\\.tsx:6:6\\)/"
+- paragraph: "/Fix error: Error Line 6 error Stack trace: Index \\(http:\\/\\/localhost:\\d+\\/src\\/pages\\/Index\\.tsx:6:6\\)/"
 - code: Fixing the error...
 - img
 - text: Index.tsx
@@ -20,6 +20,8 @@
 - text: Approved
 - img
 - text: less than a minute ago
+- img
+- text: wrote 1 file(s)
 - button "Undo":
   - img
 - button "Retry":
