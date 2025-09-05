@@ -1,0 +1,4 @@
+{
+  "linkedHasToken": true,
+  "deviceId": "d-1"
+}

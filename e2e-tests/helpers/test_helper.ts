@@ -942,6 +942,69 @@ export class PageObject {
   async sleep(ms: number) {
     await new Promise((resolve) => setTimeout(resolve, ms));
   }
+
+  // --- Ternary account helpers ---
+  async simulateDeepLink({
+    token,
+    deviceId,
+  }: {
+    token: string;
+    deviceId?: string;
+  }) {
+    await this.page.evaluate(
+      async ({ token, deviceId }) => {
+        await (window as any).electron.ipcRenderer.invoke("set-user-settings", {
+          ternaryAppToken: { value: token },
+          ternaryDeviceId: deviceId || undefined,
+        });
+        try {
+          (window as any).electron.ipcRenderer.send?.("deep-link-received");
+        } catch {}
+        try {
+          (window as any).electron.ipcRenderer.emit?.("deep-link-received");
+        } catch {}
+        // Do not reload; rely on deep-link-received listener + polling in useTernaryAccount
+      },
+      { token, deviceId },
+    );
+  }
+
+  async expectUpgradeBannerVisible() {
+    await this.page
+      .getByRole("button", { name: "Upgrade to Pro" })
+      .waitFor({ timeout: Timeout.MEDIUM });
+  }
+
+  async expectUpgradeBannerHidden() {
+    await this.page
+      .getByRole("button", { name: "Upgrade to Pro" })
+      .waitFor({ state: "detached" });
+  }
+
+  async getUserSettings<T = any>(): Promise<T> {
+    return await this.page.evaluate(async () => {
+      return await (window as any).electron.ipcRenderer.invoke(
+        "get-user-settings",
+      );
+    });
+  }
+
+  async waitForLinkedState(
+    expected: boolean,
+    timeoutMs: number = Timeout.LONG,
+  ) {
+    const start = Date.now();
+    // small settle after reload
+    await this.sleep(200);
+    while (Date.now() - start < timeoutMs) {
+      const settings: any = await this.getUserSettings();
+      const token = settings?.ternaryAppToken as { value?: string } | undefined;
+      const isLinked = !!token?.value;
+      if (isLinked === expected) return;
+      await this.sleep(250);
+    }
+    throw new Error(`Timed out waiting for linked state=${expected}`);
+  }
 }
 
 interface ElectronConfig {

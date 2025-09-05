@@ -30,8 +30,9 @@ export function useTernaryAccount() {
     const settings = await (window as any).electron.ipcRenderer.invoke(
       "get-user-settings",
     );
-    const secret = settings?.ternaryAppToken as { value: string } | undefined;
-    const t = secret?.value || null;
+    const secretRaw = settings?.ternaryAppToken as any;
+    const t =
+      typeof secretRaw === "string" ? secretRaw : secretRaw?.value || null;
     const d = (settings?.ternaryDeviceId as string) || null;
     setToken(t);
     setDeviceId(d);
@@ -62,7 +63,29 @@ export function useTernaryAccount() {
         refreshFromSettings();
       },
     );
+    // Additionally, perform a short retry loop to catch freshly written settings
+    // in test or edge environments where the event might be missed.
+    let cancelled = false;
+    (async () => {
+      const start = Date.now();
+      while (!cancelled && Date.now() - start < 5000) {
+        await new Promise((r) => setTimeout(r, 300));
+        if ((window as any).__ternary_link_checked__) break;
+        await refreshFromSettings();
+        try {
+          const settings = await (window as any).electron.ipcRenderer.invoke(
+            "get-user-settings",
+          );
+          const hasToken = !!(settings?.ternaryAppToken as any)?.value;
+          if (hasToken) {
+            (window as any).__ternary_link_checked__ = true;
+            break;
+          }
+        } catch {}
+      }
+    })();
     return () => {
+      cancelled = true;
       if (off) off();
     };
   }, [refreshFromSettings]);
