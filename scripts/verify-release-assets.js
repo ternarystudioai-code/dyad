@@ -17,7 +17,7 @@ async function verifyReleaseAssets() {
     console.log(`🔍 Verifying release assets for version ${version}...`);
 
     // GitHub API configuration
-    const owner = "ternary-sh";
+    const owner = "ternarystudio";
     const repo = "ternary";
     const token = process.env.GITHUB_TOKEN;
 
